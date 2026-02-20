@@ -14,7 +14,7 @@ jobs:
     steps:
       # 1. Mensaje de 'MR recibido' (cuando se abre o actualiza)
       - name: Send PR Received Message
-        if: github.event.action === 'opened' || github.event.action == 'synchronize'
+        if: github.event.action == 'opened' || github.event.action == 'synchronize'
         run: |
           gh pr comment ${{ github.event.pull_request.number }} --body "🐳 **MR recibido.** Procesando el cargamento..."
         env:
