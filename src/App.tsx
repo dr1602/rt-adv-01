@@ -1,4 +1,4 @@
-import { Suspense } from 'react';
+import { lazy, Suspense } from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
 
 import './App.css';
@@ -18,9 +18,17 @@ import { Provider } from 'react-redux';
 import { store } from './store/store';
 import { ZustandTodoList } from './components/ZustandTodoList';
 import { StateMachine } from './components/StateMachine';
-import { TankStack } from './components/TankStack';
+import { useCourses } from './hooks/useCourses';
+
+const CourseList = lazy(() => import('./components/TankStack'));
 
 function App() {
+  const { data: courses, isLoading, error } = useCourses();
+
+  if (isLoading) return <div>Loading</div>;
+  if (error) return <div>Error: {error.message}</div>;
+  if (!courses) return <div>No courses found</div>;
+
   return (
     <NotificatoinProvider>
       <Provider store={store}>
@@ -86,7 +94,9 @@ function App() {
           <Route path='/redux-todo' element={<TodoList />}></Route>
           <Route path='/zustand-todo' element={<ZustandTodoList />}></Route>
           <Route path='/state-machine' element={<StateMachine />}></Route>
-          <Route path='/tanstack' element={<TankStack />}></Route>
+          <Route
+            path='/tanstack'
+            element={<CourseList courses={courses} />}></Route>
         </Routes>
       </Provider>
     </NotificatoinProvider>

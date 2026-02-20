@@ -1,18 +1,26 @@
 import type React from 'react';
 
-interface CourseInterface {
+interface Course {
   id: number;
   title: string;
   description: string;
   duration: string;
 }
 
-export const TankStack: React.FC = () => {
+const TankStack: React.FC<{ courses: Course[] }> = ({ courses }) => {
   return (
     <>
       <ul>
-        <li></li>
+        {courses.map((course) => (
+          <li key={course.id}>
+            <h2>{course.title}</h2>
+            <p>{course.description}</p>
+            <p>{course.duration}</p>
+          </li>
+        ))}
       </ul>
     </>
   );
 };
+
+export default TankStack;
