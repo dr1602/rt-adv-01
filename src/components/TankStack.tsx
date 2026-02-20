@@ -1,4 +1,4 @@
-import type React from 'react';
+import React from 'react';
 
 interface Course {
   id: number;
@@ -7,7 +7,7 @@ interface Course {
   duration: string;
 }
 
-const TankStack: React.FC<{ courses: Course[] }> = ({ courses }) => {
+const TankStack: React.FC<{ courses: Course[] }> = React.memo(({ courses }) => {
   return (
     <>
       <ul>
@@ -21,6 +21,6 @@ const TankStack: React.FC<{ courses: Course[] }> = ({ courses }) => {
       </ul>
     </>
   );
-};
+});
 
 export default TankStack;
