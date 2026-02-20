@@ -1,1 +1,38 @@
-name: Wizard
+name: Wizard PR Automation
+
+on:
+  pull_request:
+    types: [opened, synchronize, closed]
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  automation:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Mensaje de 'MR recibido' (cuando se abre o actualiza)
+      - name: Send PR Received Message
+        if: github.event.action === 'opened' || github.event.action == 'synchronize'
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} --body "🐳 **MR recibido.** Procesando el cargamento..."
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 2. Aut-pull y Auto-merge (si el PR está abierto)
+      - name: Auto-merge pr
+        if: github.event.action == 'opened' || github.event.action == 'synchronize'
+        run: |
+          # Intentamos hacer el merge automáticamente usando la CLI de GitHub
+          gh pr merge ${{ github.event.pull_request.number }} --merge --auto --delete-branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 3. Mensaje de "Buen trabajo" (sólo si se mergeó con éxito)
+      - name: Celebrate merge
+        if: github.event.pull_request.merged == true
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} --body "🏆 **¡Buen trabajo, campeón!** El código ya está en puerto seguro."
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
